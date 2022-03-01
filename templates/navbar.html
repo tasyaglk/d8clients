@@ -1,0 +1,19 @@
+<header>
+        <div class="d-flex flex-column flex-md-row align-items-center pb-3 mb-4 border-bottom">
+          <a href="/" class="d-flex align-items-center text-dark text-decoration-none">
+            <span class="fs-4">d8clients</span>
+          </a>
+
+          <nav class="d-inline-flex mt-2 mt-md-0 ms-md-auto">
+              <a class="me-3 py-2 text-dark text-decoration-none" href="{% url 'main' %}">На главную</a>
+              <a class="me-3 py-2 text-dark text-decoration-none" href="{% url 'about_us' %}">О нас</a>
+              {% if request.user.is_authenticated %}
+                <a class="me-3 py-2 text-dark text-decoration-none" href="">Здарова, {{request.user.username}}!</a>
+                <a class="me-3 py-2 text-dark text-decoration-none" href="{% url 'logout' %}">Выйти</a>
+              {% else %}
+                <a class="me-3 py-2 text-dark text-decoration-none" href="{% url 'login' %}">Войти</a>
+              {% endif %}
+
+          </nav>
+        </div>
+</header>
