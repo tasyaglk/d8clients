@@ -1,40 +1,38 @@
 from django.db import models
-
 from django.contrib.auth.models import AbstractUser
+from .managers import UserManager
 
 
+# модифицированная встроенная модель пользователя
 class User(AbstractUser):
-    username = models.CharField(max_length=100, null=True)
-    email = models.EmailField(unique=True, null=True)
-    ROLE = [
-        ('client', 'client'),
-        ('employee', 'employee')
-    ]
-    type = models.CharField(max_length=100, choices=ROLE, null=True)
 
+    # искуственно удаляем поле username, приравнивая его к None
+    username = None
+
+    # обязательные поля для пользователей
+    email = models.EmailField(unique=True, default='')
+    name = models.CharField(max_length=64, default='')
+    surname = models.CharField(max_length=64, default='')
+
+    # флаг, показывающий, есть ли у пользователя функционал клиента
+    business_only = models.BooleanField(default=False, blank=True)
+
+    # авторизация происходит по почте, а не по имени пользователя
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username']
+    REQUIRED_FIELDS = ['name', 'surname']
 
+    # модифицированный встроенный менеджер
+    objects = UserManager()
 
-class Organization(models.Model):
-    name = models.CharField(max_length=100, null=True)
-    created = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return str(self.name)
-
-
-class Client(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='client')
+    @property
+    def is_client(self):
+        return not self.business_only
 
     def __str__(self):
-        return str(self.user.username)
+        return str(self.name) + ' ' + str(self.surname)
 
+    def get_short_name(self):
+        return self.name
 
-class Employee(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='employee')
-    organization = models.ForeignKey(Organization, on_delete=models.DO_NOTHING, related_name='employees')
-    bio = models.TextField(null=True, blank=True)
-
-    def __str__(self):
-        return str(self.user.username)
+    def get_full_name(self):
+        return str(self.name) + ' ' + str(self.surname)

@@ -1,0 +1,22 @@
+{% extends 'base.html'%}
+
+{% block title %}
+    Авторизация в d8clients
+{% endblock %}
+
+{% block content %}
+
+    <div>
+        <form method="POST" action=".">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <input type="submit" value="Войти" />
+        </form>
+    </div>
+
+    <div>
+        Нет аккаунта?
+        <a href="{% url 'registration' %}"> Зарегестрироваться </a>
+    </div>
+
+{% endblock %}
